@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Portal de Acesso ao Sistema de Passagens Rodoviárias - Totem e Painel Administrativo" />
+  <title>Portal de Acesso | Totem & Painel</title>
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22><text y=%22.9em%22 font-size=%2290%22>🚍</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+
+  <style>
+    :root {
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --primary-accent: #3b82f6;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      --emerald-accent: #10b981;
+      --emerald-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+      --bg-dark: #090d16;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(59, 130, 246, 0.5);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 40%);
+      min-height: 100vh;
+      color: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    .brand-title {
+      font-family: var(--font-heading);
+    }
+
+    .portal-container {
+      max-width: 1080px;
+    }
+
+    .portal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .portal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card-totem::before {
+      background: var(--primary-gradient);
+    }
+
+    .card-painel::before {
+      background: var(--emerald-gradient);
+    }
+
+    .portal-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5);
+      color: inherit;
+    }
+
+    .card-totem:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 20px 35px -10px rgba(37, 99, 235, 0.25);
+    }
+
+    .card-painel:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 20px 35px -10px rgba(16, 185, 129, 0.25);
+    }
+
+    .portal-card:hover::before {
+      opacity: 1;
+    }
+
+    .icon-wrapper {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .portal-card:hover .icon-wrapper {
+      transform: scale(1.08);
+    }
+
+    .icon-totem {
+      background: rgba(37, 99, 235, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .icon-painel {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .badge-module {
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 0.35rem 0.8rem;
+      border-radius: 50rem;
+    }
+
+    .badge-totem {
+      background: rgba(37, 99, 235, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-painel {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .action-btn {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 0.75rem 1.25rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-totem {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-totem:hover {
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+
+    .btn-painel {
+      background: #059669;
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-painel:hover {
+      background: #047857;
+      color: #ffffff;
+    }
+
+    .status-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50rem;
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header / Barra Superior -->
+  <header class="py-4 border-bottom border-secondary border-opacity-10">
+    <div class="container portal-container d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-4">🚍</span>
+        <span class="brand-title fw-bold fs-5 tracking-wide text-white">Viagem Fácil</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="container portal-container my-auto py-5">
+    <div class="text-center mb-5">
+      <h1 class="display-5 fw-bold text-white mb-3">Portal de Acesso</h1>
+      <p class="text-secondary fs-5 mx-auto" style="max-width: 620px;">
+        Selecione o módulo que deseja inicializar para continuar.
+      </p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <!-- Módulo 1: Totem de Autoatendimento -->
+      <div class="col-12 col-md-6 col-lg-5">
+        <a href="totem.html" class="portal-card card-totem p-4 p-lg-5" id="link-totem">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="icon-wrapper icon-totem">
+              <i class="ph-bold ph-device-tablet-speaker"></i>
+            </div>
+            <span class="badge-module badge-totem">Terminal Público</span>
+          </div>
+
+          <h2 class="h3 fw-bold text-white mb-2">Totem de Autoatendimento</h2>
+          <p class="text-secondary mb-4 flex-grow-1">
+            Interface otimizada para telas touch e totens. Permite busca de destinos, escolha de horários, seleção de
+            poltronas e pagamento rápido via PIX ou Cartão.
+          </p>
+
+          <div
+            class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-10">
+            <code class="text-primary-emphasis bg-dark px-2 py-1 rounded small">totem.html</code>
+            <span class="action-btn btn-totem">
+              Acessar Totem
+              <i class="ph-bold ph-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Módulo 2: Painel Administrativo -->
+      <div class="col-12 col-md-6 col-lg-5">
+        <a href="painel.html" class="portal-card card-painel p-4 p-lg-5" id="link-painel">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="icon-wrapper icon-painel">
+              <i class="ph-bold ph-chart-line-up"></i>
+            </div>
+            <span class="badge-module badge-painel">Gestão & Matriz</span>
+          </div>
+
+          <h2 class="h3 fw-bold text-white mb-2">Painel Gerencial</h2>
+          <p class="text-secondary mb-4 flex-grow-1">
+            Central administrativa para gestão de viagens, rotas, relatórios financeiros, controle de vendas em tempo
+            real, monitoramento e criação de cupons.
+          </p>
+
+          <div
+            class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-10">
+            <code class="text-success-emphasis bg-dark px-2 py-1 rounded small">painel.html</code>
+            <span class="action-btn btn-painel">
+              Acessar Painel
+              <i class="ph-bold ph-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4 border-top border-secondary border-opacity-10 text-center text-secondary small">
+    <div class="container portal-container">
+      <p class="mb-0">Totem V1 • Desenvolvido para implantação estática e rápida no Vercel.</p>
+    </div>
+  </footer>
+</body>
+
+</html>
