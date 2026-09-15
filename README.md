@@ -49,7 +49,6 @@ O sistema é dividido em duas interfaces complementares:
 web-app/
 ├── index.html                  # Interface do Totem de Autoatendimento
 ├── painel.html                 # Interface do Painel Gerencial Matriz
-├── README.md                   # Documentação do projeto
 └── assets/
     ├── css/
     │   ├── main.css            # Variáveis globais, tema claro/escuro e layout básico
