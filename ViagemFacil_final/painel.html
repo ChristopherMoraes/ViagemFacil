@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel Gerencial • Central Matriz</title>
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+
+
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+
+
+  <link rel="stylesheet" href="./assets/painel/css/admin.css" />
+  <script type="module" src="./assets/painel/js/admin-main.js"></script>
+</head>
+
+<body class="corpo-painel-admin" x-data x-init="$store.central.currentTab = 'dashboard'">
+
+
+
+
+  <template x-if="!$store.central.isAuthenticated">
+    <div class="tela-login-admin">
+      <div class="caixa-login-admin">
+
+        <div class="cabecalho-login-admin">
+          <div class="icone-logo-login-admin">
+            <i class="ph-bold ph-buildings"></i>
+          </div>
+          <h3 class="h4 fw-bold mb-1">Viagem Facil <span class="text-white">ERP</span></h3>
+          <div class="text-muted small">Central Matriz • Gestão Multi-Totem</div>
+        </div>
+
+        <div class="corpo-login-admin">
+
+          <template x-if="$store.central.loginForm.error">
+            <div class="alert alert-danger py-2 px-3 small d-flex align-items-center gap-2 mb-3" role="alert">
+              <i class="ph-bold ph-warning-circle fs-5"></i>
+              <span x-text="$store.central.loginForm.error"></span>
+            </div>
+          </template>
+
+          <form @submit.prevent="$store.central.login(); $store.central.currentTab = 'dashboard'">
+            <div class="mb-3">
+              <label class="rotulo-formulario-suave">Usuário do Sistema:</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted borda-suave-erp">
+                  <i class="ph-bold ph-user"></i>
+                </span>
+                <input type="text" class="form-control campo-formulario-suave border-start-0 ps-0"
+                  placeholder="Digite seu usuário" x-model="$store.central.loginForm.username" required autofocus />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="rotulo-formulario-suave">Senha de Acesso:</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted borda-suave-erp">
+                  <i class="ph-bold ph-lock-key"></i>
+                </span>
+                <input type="password" class="form-control campo-formulario-suave border-start-0 ps-0"
+                  placeholder="••••••••" x-model="$store.central.loginForm.password" required />
+              </div>
+            </div>
+
+            <button type="submit" class="botao-primario-suave w-100 py-2"
+              @click="$store.central.currentTab = 'dashboard'">
+              <i class="ph-bold ph-sign-in me-1"></i> Acessar Sistema Matriz
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </template>
+
+
+  <template x-if="$store.central.isAuthenticated">
+    <div class="painel-admin-container" x-init="$store.central.currentTab = 'dashboard'">
+
+
+      <aside class="menu-lateral-admin">
+
+
+        <div class="cabecalho-menu-lateral">
+          <div class="logo-menu-lateral">
+            <i class="ph-bold ph-buildings"></i>
+          </div>
+          <div>
+            <div class="fw-bold fs-6 lh-1 texto-titulo-erp">Viagem Facil <span class="text-white">ERP</span></div>
+            <div class="text-muted" style="font-size: 0.72rem;">Central Matriz • 4 Totens</div>
+          </div>
+        </div>
+
+
+        <nav class="navegacao-menu-lateral">
+
+          <div class="categoria-menu-lateral">Principal</div>
+
+          <button type="button" class="link-menu-lateral"
+            :class="{ 'ativo active': $store.central.currentTab === 'dashboard' }"
+            @click="$store.central.currentTab = 'dashboard'">
+            <i class="ph-bold ph-chart-polar"></i>
+            <span>Visão Geral</span>
+          </button>
+
+          <div class="categoria-menu-lateral">Gestão Financeira</div>
+
+          <button type="button" class="link-menu-lateral"
+            :class="{ 'ativo active': $store.central.currentTab === 'financial' }"
+            @click="$store.central.currentTab = 'financial'">
+            <i class="ph-bold ph-bank"></i>
+            <span>Módulo Financeiro</span>
+          </button>
+
+          <div class="categoria-menu-lateral">Cadastros Administrativos</div>
+
+          <button type="button" class="link-menu-lateral"
+            :class="{ 'ativo active': $store.central.currentTab === 'companies' }"
+            @click="$store.central.currentTab = 'companies'">
+            <i class="ph-bold ph-bus"></i>
+            <span>Companhias de Ônibus</span>
+          </button>
+
+          <button type="button" class="link-menu-lateral"
+            :class="{ 'ativo active': $store.central.currentTab === 'routes' }"
+            @click="$store.central.currentTab = 'routes'">
+            <i class="ph-bold ph-map-trifold"></i>
+            <span>Rotas & Horários</span>
+          </button>
+
+          <button type="button" class="link-menu-lateral"
+            :class="{ 'ativo active': $store.central.currentTab === 'promotions' }"
+            @click="$store.central.currentTab = 'promotions'">
+            <i class="ph-bold ph-tag"></i>
+            <span>Promoções & Descontos</span>
+          </button>
+
+          <button type="button" class="link-menu-lateral"
+            :class="{ 'ativo active': $store.central.currentTab === 'client-info' }"
+            @click="$store.central.currentTab = 'client-info'">
+            <i class="ph-bold ph-users"></i>
+            <span>Clientes Cadastrados</span>
+          </button>
+
+          <div class="categoria-menu-lateral">Hardware & Terminais</div>
+
+          <button type="button" class="link-menu-lateral"
+            :class="{ 'ativo active': $store.central.currentTab === 'totens' }"
+            @click="$store.central.currentTab = 'totens'">
+            <i class="ph-bold ph-devices"></i>
+            <span>Gestão de Totens</span>
+          </button>
+
+        </nav>
+
+
+        <div class="rodape-menu-lateral">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2 min-w-0">
+              <div class="rounded-circle bg-white d-flex align-items-center justify-content-center fw-bold shadow-sm"
+                style="width: 34px; height: 34px; font-size: 0.8rem; color: #468489 !important;">
+                AD
+              </div>
+              <div class="min-w-0">
+                <div class="fw-bold small text-truncate text-white">Administrador</div>
+                <div class="text-white-50" style="font-size: 0.7rem;">Sessão Matriz</div>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-link text-white p-1 px-2 text-decoration-none"
+              @click="$store.central.logout(); $store.central.currentTab = 'dashboard'" title="Sair do Sistema">
+              <i class="ph-bold ph-sign-out fs-5"></i>
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+
+      <main class="conteudo-principal-admin">
+
+
+        <header class="barra-superior-admin">
+          <div>
+            <h1 class="h5 fw-bold mb-0">
+              <template x-if="$store.central.currentTab === 'dashboard'"><span>Visão Geral</span></template>
+              <template x-if="$store.central.currentTab === 'client-info'"><span>Clientes Cadastrados</span></template>
+              <template x-if="$store.central.currentTab === 'totens'"><span>Gestão de Totens</span></template>
+              <template x-if="$store.central.currentTab === 'financial'"><span>Módulo Financeiro</span></template>
+              <template x-if="$store.central.currentTab === 'companies'"><span>Companhias de Ônibus</span></template>
+              <template x-if="$store.central.currentTab === 'routes'"><span>Rotas & Horários</span></template>
+              <template x-if="$store.central.currentTab === 'promotions'"><span>Promoções & Descontos</span></template>
+            </h1>
+          </div>
+
+
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-sm btn-outline-danger fw-bold d-flex align-items-center gap-1 px-3"
+              @click="$store.central.logout(); $store.central.currentTab = 'dashboard'" title="Encerrar sessão">
+              <i class="ph-bold ph-sign-out"></i>
+              <span>Sair</span>
+            </button>
+          </div>
+        </header>
+
+
+        <div class="p-4">
+
+
+          <div x-show="$store.central.currentTab === 'dashboard'" x-transition.duration.150ms>
+
+
+            <div class="row g-3 mb-4">
+
+              <div class="col-12 col-sm-6 col-xl-3">
+                <div class="cartao-indicador-kpi">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <div class="small text-muted fw-bold text-uppercase" style="font-size: 0.72rem;">Faturamento Total
+                        Hoje</div>
+                      <div class="valor-indicador-kpi text-success"
+                        x-text="$store.central.formatCurrency($store.central.totalNetworkRevenue)"></div>
+                    </div>
+                    <div class="logo-menu-lateral" style="background: #ecfdf5; color: #059669; box-shadow: none;">
+                      <i class="ph-bold ph-currency-dollar-simple"></i>
+                    </div>
+                  </div>
+                  <div class="small text-muted mt-2 d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+                    <i class="ph-bold ph-trend-up text-success"></i>
+                    <span class="text-success fw-bold">+22.4%</span> vs semana anterior
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-6 col-xl-3">
+                <div class="cartao-indicador-kpi">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <div class="small text-muted fw-bold text-uppercase" style="font-size: 0.72rem;">Passagens
+                        Emitidas Hoje</div>
+                      <div class="valor-indicador-kpi text-primary"
+                        x-text="$store.central.formatCount($store.central.totalNetworkTickets)"></div>
+                    </div>
+                    <div class="logo-menu-lateral" style="background: #eff6ff; color: #2563eb; box-shadow: none;">
+                      <i class="ph-bold ph-ticket"></i>
+                    </div>
+                  </div>
+                  <div class="small text-muted mt-2 d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+                    <i class="ph-bold ph-check-circle text-primary"></i>
+                    <span>100% integradas à ANTT</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-6 col-xl-3">
+                <div class="cartao-indicador-kpi">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <div class="small text-muted fw-bold text-uppercase" style="font-size: 0.72rem;">Ticket Médio
+                        Consolidado</div>
+                      <div class="valor-indicador-kpi" style="color: #6366f1;"
+                        x-text="$store.central.formatCurrency($store.central.averageNetworkTicket)"></div>
+                    </div>
+                    <div class="logo-menu-lateral" style="background: #eef2ff; color: #6366f1; box-shadow: none;">
+                      <i class="ph-bold ph-chart-bar"></i>
+                    </div>
+                  </div>
+                  <div class="small text-muted mt-2" style="font-size: 0.78rem;">
+                    <span>Média por bilhete vendido</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-6 col-xl-3">
+                <div class="cartao-indicador-kpi">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <div class="small text-muted fw-bold text-uppercase" style="font-size: 0.72rem;">Taxa de Ocupação
+                        da Frota</div>
+                      <div class="valor-indicador-kpi text-warning">86.8%</div>
+                    </div>
+                    <div class="logo-menu-lateral" style="background: #fffbeb; color: #d97706; box-shadow: none;">
+                      <i class="ph-bold ph-bus"></i>
+                    </div>
+                  </div>
+                  <div class="small text-muted mt-2" style="font-size: 0.78rem;">
+                    <span class="text-success fw-bold">Alta Demanda</span> no trecho SP ➔ RJ
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h5 class="fw-bold mb-0 texto-titulo-erp">Monitoramento Instantâneo dos 4 Totens</h5>
+                  <div class="text-muted small">Status de conectividade em tempo real</div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary fw-bold"
+                  @click="$store.central.currentTab = 'totens'">
+                  Ver Todos os Totens ➔
+                </button>
+              </div>
+
+              <div class="row g-3">
+                <template x-for="t in $store.central.totens" :key="t.id">
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <div class="cartao-hardware-totem" :class="{
+                        'status-online': t.status === 'ONLINE',
+                        'status-offline': t.status === 'OFFLINE'
+                      }">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <h6 class="fw-bold mb-0 texto-titulo-erp" x-text="t.name"></h6>
+                          <div class="text-muted" style="font-size: 0.75rem;" x-text="t.terminal"></div>
+                        </div>
+
+                        <span :class="{
+                            'selo-status-online': t.status === 'ONLINE',
+                            'selo-status-offline': t.status === 'OFFLINE'
+                          }">
+                          <span class="rounded-circle"
+                            :style="`width: 6px; height: 6px; background: ${t.status === 'ONLINE' ? '#10b981' : '#64748b'};`"></span>
+                          <span x-text="t.status === 'ONLINE' ? 'Online' : 'Offline'"></span>
+                        </span>
+                      </div>
+
+
+                      <div class="d-flex justify-content-between small text-muted border-top pt-2 mt-auto"
+                        style="font-size: 0.78rem;">
+                        <span>Vendas Hoje:</span>
+                        <strong class="texto-titulo-erp"
+                          x-text="$store.central.formatCurrency(t.todayRevenue)"></strong>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+
+            <div class="container-tabela-admin">
+              <div class="p-3 border-bottom d-flex justify-content-between align-items-center"
+                style="background: var(--cor-erp-superficie-elevada);">
+                <h6 class="fw-bold mb-0 texto-titulo-erp">Últimas Vendas da Rede (Tempo Real)</h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                  @click="$store.central.currentTab = 'financial'">
+                  Ver Histórico Completo ➔
+                </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Localizador</th>
+                      <th>Totem</th>
+                      <th>Passageiro</th>
+                      <th>Itinerário</th>
+                      <th>Total Pago</th>
+                      <th>Pagamento</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="s in $store.central.sales.slice(0, 5)" :key="s.id">
+                      <tr>
+                        <td><span class="badge bg-light text-dark border badge-code" x-text="s.locator"></span></td>
+                        <td><span class="badge bg-primary-subtle text-primary border" x-text="s.totemName"></span></td>
+                        <td class="fw-bold" x-text="$store.central.obterNomePassageiro(s.passenger)"></td>
+                        <td class="small" x-text="`${s.trip.origin.name} ➔ ${s.trip.destination.name}`"></td>
+                        <td class="fw-bold text-success" x-text="$store.central.formatCurrency(s.payment.totalPaid)">
+                        </td>
+                        <td><span class="badge bg-light text-dark border" x-text="s.payment.method"></span></td>
+                        <td><span class="badge bg-success-subtle text-success border border-success">Concluída</span>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div x-show="$store.central.currentTab === 'totens'" x-transition.duration.150ms>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+              <div>
+                <h4 class="fw-bold mb-1 texto-titulo-erp">Gestão de Totens</h4>
+                <div class="text-muted small">Controle de periféricos e ações remotas</div>
+              </div>
+
+              <button type="button" class="botao-primario-suave" @click="$store.central.openNewTotemModal()">
+                <i class="ph-bold ph-plus me-1"></i> Cadastrar Novo Totem
+              </button>
+            </div>
+
+
+            <div class="row g-4 mb-4">
+              <template x-for="t in $store.central.filteredTotens" :key="t.id">
+                <div class="col-12 col-lg-6 col-xl-6">
+                  <div class="cartao-hardware-totem" :class="{
+                      'status-online': t.status === 'ONLINE',
+                      'status-offline': t.status === 'OFFLINE'
+                    }">
+
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="caixa-icone-totem">
+                          <i class="ph-bold ph-device-tablet"></i>
+                        </div>
+                        <div>
+                          <div class="d-flex align-items-center gap-2">
+                            <h5 class="fw-bold mb-0 texto-titulo-erp" x-text="t.name"></h5>
+                            <span class="badge bg-light text-muted border" x-text="`ID: ${t.id}`"></span>
+                          </div>
+                          <div class="small fw-semibold text-primary" x-text="t.terminal"></div>
+                          <div class="small text-muted" x-text="`Local: ${t.location}`"></div>
+                        </div>
+                      </div>
+
+                      <span :class="{
+                          'selo-status-online': t.status === 'ONLINE',
+                          'selo-status-offline': t.status === 'OFFLINE'
+                        }">
+                        <span class="rounded-circle"
+                          :style="`width: 6px; height: 6px; background: ${t.status === 'ONLINE' ? '#10b981' : '#64748b'};`"></span>
+                        <span x-text="t.status === 'ONLINE' ? 'Online' : 'Offline'"></span>
+                      </span>
+                    </div>
+
+
+
+
+                    <div class="grade-telemetria-totem">
+                      <div class="item-telemetria-totem">
+                        <i class="ph-bold ph-printer text-primary"></i>
+                        <span>Impressora: <strong x-text="t.printerSerial"></strong></span>
+                      </div>
+                      <div class="item-telemetria-totem">
+                        <i class="ph-bold ph-credit-card text-success"></i>
+                        <span>PinPad: <strong x-text="t.pinpadModel"></strong></span>
+                      </div>
+                      <div class="item-telemetria-totem">
+                        <i class="ph-bold ph-globe text-info"></i>
+                        <span>IP: <strong x-text="t.ipAddress"></strong></span>
+                      </div>
+                      <div class="item-telemetria-totem">
+                        <i class="ph-bold ph-shield-check text-warning"></i>
+                        <span>Sinc. ANTT: <strong class="text-success">Ativa</strong></span>
+                      </div>
+                    </div>
+
+
+                    <div class="d-flex flex-wrap gap-2 pt-2 border-top mt-auto">
+
+                      <button type="button" class="btn btn-sm btn-outline-secondary botao-acao-remota"
+                        @click="$store.central.restartTotem(t.id)" :disabled="t.isRestarting">
+                        <i class="ph-bold ph-arrows-clockwise" :class="{ 'fa-spin': t.isRestarting }"></i>
+                        <span x-text="t.isRestarting ? 'Reiniciando...' : 'Reiniciar Totem'"></span>
+                      </button>
+
+                      <button type="button" class="btn btn-sm btn-outline-primary botao-acao-remota"
+                        @click="$store.central.testPrint(t.id)">
+                        <i class="ph-bold ph-printer"></i>
+                        <span>Impressão Teste</span>
+                      </button>
+
+                      <button type="button" class="btn btn-sm botao-acao-remota fw-bold"
+                        :class="t.status === 'OFFLINE' ? 'btn-success text-white' : 'btn-outline-danger'"
+                        @click="$store.central.toggleTotemActive(t.id)"
+                        :title="t.status === 'OFFLINE' ? 'Clique para ativar e conectar este totem na rede' : 'Clique para desativar este totem temporariamente'">
+                        <i class="ph-bold" :class="t.status === 'OFFLINE' ? 'ph-check-circle' : 'ph-power'"></i>
+                        <span x-text="t.status === 'OFFLINE' ? 'Ativar Totem' : 'Desativar Totem'"></span>
+                      </button>
+
+
+                    </div>
+
+                  </div>
+                </div>
+              </template>
+            </div>
+
+          </div>
+
+
+          <div x-show="$store.central.currentTab === 'financial'" x-transition.duration.150ms>
+
+            <!-- feed de vendas e transacoes consolidado dentro do modulo financeiro -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+              <div>
+                <h5 class="fw-bold mb-1 texto-titulo-erp">Feed de Vendas Consolidadas</h5>
+                <div class="text-muted small">Todas as transações registradas em tempo real</div>
+              </div>
+            </div>
+
+            <!-- barra de filtros de vendas -->
+            <div class="barra-filtros-vendas">
+              <div class="row g-3 align-items-end">
+
+                <!-- filtro de periodo seguindo o mesmo padrao -->
+                <div class="col-12 col-sm-6 col-md-3 col-xl-2">
+                  <div class="item-filtro-bloco">
+                    <label class="rotulo-filtro-pequeno">
+                      <i class="ph-bold ph-calendar me-1 text-primary"></i> Período
+                    </label>
+                    <select class="form-select campo-formulario-suave" x-model="$store.central.filtroVendas.periodo"
+                      @change="$store.central.carregarVendasDoBancoComFiltrosSQL()">
+                      <option value="hoje">Hoje</option>
+                      <option value="7dias">Últimos 7 dias</option>
+                      <option value="30dias">Últimos 30 dias</option>
+                      <option value="mes">Mês Atual</option>
+                      <option value="todos">Todo o Período</option>
+                      <option value="personalizado">Personalizado</option>
+                    </select>
+
+                    <!-- se selecionado personalizado, exibe campos de data inicio e fim -->
+                    <template x-if="$store.central.filtroVendas.periodo === 'personalizado'">
+                      <div class="d-flex align-items-center gap-1 mt-2">
+                        <input type="date" class="form-control form-control-sm campo-formulario-suave"
+                          style="font-size: 0.78rem;" x-model="$store.central.filtroVendas.dataInicio"
+                          @change="$store.central.carregarVendasDoBancoComFiltrosSQL()" />
+                        <span class="text-muted small">até</span>
+                        <input type="date" class="form-control form-control-sm campo-formulario-suave"
+                          style="font-size: 0.78rem;" x-model="$store.central.filtroVendas.dataFim"
+                          @change="$store.central.carregarVendasDoBancoComFiltrosSQL()" />
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+                <!-- filtro por totem -->
+                <div class="col-12 col-sm-6 col-md-3 col-xl-2">
+                  <div class="item-filtro-bloco">
+                    <label class="rotulo-filtro-pequeno">
+                      <i class="ph-bold ph-device-tablet me-1 text-primary"></i> Totem Origem
+                    </label>
+                    <select class="form-select campo-formulario-suave" x-model="$store.central.filtroVendas.totem"
+                      @change="$store.central.carregarVendasDoBancoComFiltrosSQL()">
+                      <option value="todos">Todos os Totens</option>
+                      <template x-for="t in $store.central.totens" :key="t.id">
+                        <option :value="t.name" x-text="t.name"></option>
+                      </template>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- filtro por forma de pagamento -->
+                <div class="col-12 col-sm-6 col-md-3 col-xl-2">
+                  <div class="item-filtro-bloco">
+                    <label class="rotulo-filtro-pequeno">
+                      <i class="ph-bold ph-credit-card me-1 text-primary"></i> Pagamento
+                    </label>
+                    <select class="form-select campo-formulario-suave"
+                      x-model="$store.central.filtroVendas.formaPagamento"
+                      @change="$store.central.carregarVendasDoBancoComFiltrosSQL()">
+                      <option value="todas">Todas as Formas</option>
+                      <option value="PIX">PIX</option>
+                      <option value="CREDITO">Crédito</option>
+                      <option value="DEBITO">Débito</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- filtro de busca com select (nome, cpf, localizador) -->
+                <div class="col-12 col-md-6 col-xl-4">
+                  <div class="item-filtro-bloco">
+                    <label class="rotulo-filtro-pequeno">
+                      <i class="ph-bold ph-magnifying-glass me-1 text-primary"></i> Pesquisar Transação
+                    </label>
+                    <div class="input-group">
+                      <select class="form-select campo-formulario-suave flex-grow-0" style="width: 140px;"
+                        x-model="$store.central.filtroVendas.tipoBusca"
+                        @change="$store.central.carregarVendasDoBancoComFiltrosSQL()">
+                        <option value="nome">Nome</option>
+                        <option value="cpf">CPF</option>
+                        <option value="localizador">Localizador</option>
+                      </select>
+                      <input type="text" class="form-control campo-formulario-suave"
+                        :placeholder="$store.central.filtroVendas.tipoBusca === 'nome' ? 'Digite o nome do passageiro...' : ($store.central.filtroVendas.tipoBusca === 'cpf' ? 'Digite o CPF...' : 'Ex: TTM-102938...')"
+                        x-model="$store.central.filtroVendas.termoBusca"
+                        @input.debounce.300ms="$store.central.carregarVendasDoBancoComFiltrosSQL()" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- botao limpar filtros e badge contador -->
+                <div
+                  class="col-12 col-xl-2 d-flex align-items-center justify-content-between justify-content-xl-end gap-2">
+                  <button type="button"
+                    class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 px-3 py-2 fw-bold"
+                    @click="$store.central.limparFiltrosVendas()" title="Resetar todos os filtros">
+                    <i class="ph-bold ph-arrow-counter-clockwise"></i>
+                    <span>Limpar</span>
+                  </button>
+
+                  <span class="badge bg-light text-primary border border-primary px-3 py-2 fw-bold text-nowrap"
+                    x-text="`${$store.central.vendasFiltradas.length} vendas`"></span>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- tabela de transacoes detalhadas -->
+            <div class="container-tabela-admin mb-4">
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Localizador</th>
+                      <th>Totem Origem</th>
+                      <th role="button" class="cabecalho-clicavel"
+                        @click="$store.central.alternarOrdenacaoVendas('data_hora')"
+                        title="Clique para ordenar por Data & Hora">
+                        <div class="d-flex align-items-center gap-1">
+                          <span>Data & Hora</span>
+                          <i class="ph-bold" style="font-size: 0.72rem;"
+                            :class="$store.central.filtroVendas.colunaOrdenacao === 'data_hora' ? ($store.central.filtroVendas.direcaoOrdenacao === 'ASC' ? 'ph-arrow-up text-primary' : 'ph-arrow-down text-primary') : 'ph-arrows-down-up text-muted opacity-50'"></i>
+                        </div>
+                      </th>
+                      <th role="button" class="cabecalho-clicavel"
+                        @click="$store.central.alternarOrdenacaoVendas('passageiro_nome')"
+                        title="Clique para ordenar por Passageiro">
+                        <div class="d-flex align-items-center gap-1">
+                          <span>Passageiro</span>
+                          <i class="ph-bold" style="font-size: 0.72rem;"
+                            :class="$store.central.filtroVendas.colunaOrdenacao === 'passageiro_nome' ? ($store.central.filtroVendas.direcaoOrdenacao === 'DESC' ? 'ph-arrow-down text-primary' : 'ph-arrow-up text-primary') : 'ph-arrows-down-up text-muted opacity-50'"></i>
+                        </div>
+                      </th>
+                      <th>CPF</th>
+                      <th>Itinerário</th>
+                      <th>Poltrona(s)</th>
+                      <th role="button" class="cabecalho-clicavel"
+                        @click="$store.central.alternarOrdenacaoVendas('valor_pago')"
+                        title="Clique para ordenar por Total Pago">
+                        <div class="d-flex align-items-center gap-1">
+                          <span>Total Pago</span>
+                          <i class="ph-bold" style="font-size: 0.72rem;"
+                            :class="$store.central.filtroVendas.colunaOrdenacao === 'valor_pago' ? ($store.central.filtroVendas.direcaoOrdenacao === 'DESC' ? 'ph-arrow-down text-primary' : 'ph-arrow-up text-primary') : 'ph-arrows-down-up text-muted opacity-50'"></i>
+                        </div>
+                      </th>
+                      <th>Pagamento</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="sale in $store.central.vendasPaginadas" :key="sale.id">
+                      <tr>
+                        <td><span class="badge bg-light text-dark border badge-code" x-text="sale.locator"></span>
+                        </td>
+                        <td><span class="badge bg-primary-subtle text-primary border" x-text="sale.totemName"></span>
+                        </td>
+                        <td class="small" x-text="sale.dateStr"></td>
+                        <td class="fw-bold" x-text="$store.central.obterNomePassageiro(sale.passenger)"></td>
+                        <td><span class="badge bg-light text-muted border texto-codigo-erp"
+                            x-text="$store.central.obterCpfPassageiro(sale.passenger)"></span></td>
+                        <td class="small fw-semibold"
+                          x-text="`${sale.trip ? sale.trip.origin.name : ''} ➔ ${sale.trip ? sale.trip.destination.name : ''}`">
+                        </td>
+                        <td><span class="badge bg-primary-subtle text-primary border"
+                            x-text="sale.seats ? sale.seats.join(', ') : '-'"></span></td>
+                        <td class="fw-bold text-success"
+                          x-text="$store.central.formatCurrency(sale.payment ? sale.payment.totalPaid : 0)"></td>
+                        <td><span class="badge bg-light text-dark border"
+                            x-text="sale.payment ? sale.payment.method : 'PIX'"></span></td>
+                        <td><span class="badge bg-success-subtle text-success border border-success">Concluída</span>
+                        </td>
+                      </tr>
+                    </template>
+                    <template x-if="$store.central.vendasFiltradas.length === 0">
+                      <tr>
+                        <td colspan="10" class="text-center py-5 text-muted">
+                          <i class="ph-bold ph-magnifying-glass fs-2 d-block mb-2 text-secondary"></i>
+                          <div class="fw-semibold">Nenhuma venda encontrada com os filtros selecionados.</div>
+                          <button type="button" class="btn btn-sm btn-outline-primary mt-3"
+                            @click="$store.central.limparFiltrosVendas()">
+                            Limpar Filtros
+                          </button>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- rodape fixo com totais consolidados e paginacao (20 por pagina) -->
+              <div class="rodape-fixo-vendas-totais p-3">
+                <div class="d-flex flex-wrap justify-content-end align-items-center gap-2">
+
+                  <!-- Total Transações alinhado à direita no mesmo formato de cartão -->
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-muted" style="font-size: 0.68rem; font-weight: 700;">TOTAL TRANSAÇÕES</div>
+                      <strong class="text-dark" style="font-size: 0.85rem;"
+                        x-text="`${$store.central.resumoVendasFiltradas.totalVendas} vendas`"></strong>
+                    </div>
+                  </div>
+
+                  <!-- PIX -->
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-muted" style="font-size: 0.68rem; font-weight: 700;">PIX (<span
+                          x-text="$store.central.resumoVendasFiltradas.qtdPix"></span>)</div>
+                      <strong class="text-dark" style="font-size: 0.85rem;"
+                        x-text="$store.central.formatCurrency($store.central.resumoVendasFiltradas.totalPix)"></strong>
+                    </div>
+                  </div>
+
+                  <!-- CRÉDITO -->
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-muted" style="font-size: 0.68rem; font-weight: 700;">CRÉDITO (<span
+                          x-text="$store.central.resumoVendasFiltradas.qtdCredito"></span>)</div>
+                      <strong class="text-dark" style="font-size: 0.85rem;"
+                        x-text="$store.central.formatCurrency($store.central.resumoVendasFiltradas.totalCredito)"></strong>
+                    </div>
+                  </div>
+
+                  <!-- DÉBITO -->
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-muted" style="font-size: 0.68rem; font-weight: 700;">DÉBITO (<span
+                          x-text="$store.central.resumoVendasFiltradas.qtdDebito"></span>)</div>
+                      <strong class="text-dark" style="font-size: 0.85rem;"
+                        x-text="$store.central.formatCurrency($store.central.resumoVendasFiltradas.totalDebito)"></strong>
+                    </div>
+                  </div>
+
+                  <!-- Total Recebido: caixa branca padrão, rótulo com fonte preta, somente o valor verde -->
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-dark" style="font-size: 0.68rem; font-weight: 700;">TOTAL RECEBIDO</div>
+                      <strong class="text-success fs-6 fw-bold"
+                        x-text="$store.central.formatCurrency($store.central.resumoVendasFiltradas.totalRecebido)"></strong>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- barra de paginacao (20 vendas por pagina) -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-3 mt-2 border-top"
+                  style="font-size: 0.82rem;">
+                  <div class="text-muted">
+                    Exibindo <strong
+                      x-text="(($store.central.filtroVendas.paginaAtual - 1) * $store.central.filtroVendas.itensPorPagina) + ($store.central.vendasPaginadas.length > 0 ? 1 : 0)"></strong>
+                    a <strong
+                      x-text="(($store.central.filtroVendas.paginaAtual - 1) * $store.central.filtroVendas.itensPorPagina) + $store.central.vendasPaginadas.length"></strong>
+                    de <strong x-text="$store.central.vendasFiltradas.length"></strong> vendas (20 por página)
+                  </div>
+
+                  <div class="d-flex align-items-center gap-1" x-show="$store.central.totalPaginasVendas > 1">
+                    <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2"
+                      :disabled="$store.central.filtroVendas.paginaAtual <= 1"
+                      @click="$store.central.mudarPaginaVendas($store.central.filtroVendas.paginaAtual - 1)">
+                      <i class="ph-bold ph-caret-left"></i> Anterior
+                    </button>
+
+                    <template x-for="p in $store.central.totalPaginasVendas" :key="p">
+                      <button type="button" class="btn btn-sm py-1 px-2 fw-bold"
+                        :class="$store.central.filtroVendas.paginaAtual === p ? 'btn-primary text-white' : 'btn-outline-secondary'"
+                        @click="$store.central.mudarPaginaVendas(p)" x-text="p"></button>
+                    </template>
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2"
+                      :disabled="$store.central.filtroVendas.paginaAtual >= $store.central.totalPaginasVendas"
+                      @click="$store.central.mudarPaginaVendas($store.central.filtroVendas.paginaAtual + 1)">
+                      Próxima <i class="ph-bold ph-caret-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- demonstrativo consolidado por terminal (posicionado abaixo das vendas) -->
+            <div class="container-tabela-admin mb-4 mt-4">
+              <div class="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-3"
+                style="background: var(--cor-erp-superficie-elevada);">
+                <div>
+                  <h5 class="fw-bold mb-0 texto-titulo-erp">Demonstrativo de Vendas por Totem</h5>
+                  <div class="text-muted small">Faturamento consolidado, formas de pagamento e comissão retida por
+                    terminal</div>
+                </div>
+
+                <!-- filtro de periodo por totem -->
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">
+                      <i class="ph-bold ph-calendar me-1 text-primary"></i> Período:
+                    </span>
+                    <select class="form-select form-select-sm campo-formulario-suave"
+                      style="width: auto; min-width: 150px; font-size: 0.82rem;"
+                      x-model="$store.central.filtroPeriodoTotem">
+                      <option value="hoje">Hoje</option>
+                      <option value="7dias">Últimos 7 dias</option>
+                      <option value="30dias">Últimos 30 dias</option>
+                      <option value="mes">Mês Atual</option>
+                      <option value="todos">Todo o Período</option>
+                      <option value="personalizado">Personalizado</option>
+                    </select>
+                  </div>
+
+                  <!-- Campos de data caso seja selecionado personalizado -->
+                  <template x-if="$store.central.filtroPeriodoTotem === 'personalizado'">
+                    <div class="d-flex align-items-center gap-1">
+                      <input type="date" class="form-control form-control-sm campo-formulario-suave"
+                        style="font-size: 0.8rem; width: 135px;" x-model="$store.central.filtroDataInicioTotem" />
+                      <span class="text-muted small">até</span>
+                      <input type="date" class="form-control form-control-sm campo-formulario-suave"
+                        style="font-size: 0.8rem; width: 135px;" x-model="$store.central.filtroDataFimTotem" />
+                    </div>
+                  </template>
+
+                  <span class="badge bg-light text-dark border px-3 py-2 fw-bold text-nowrap"
+                    x-text="`${$store.central.totaisSalesByTotem.count} vendas no período`"></span>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Totem</th>
+                      <th>Localização</th>
+                      <th>Status</th>
+                      <th>Passagens</th>
+                      <th>PIX</th>
+                      <th>Cartão</th>
+                      <th>Comissão (8.5%)</th>
+                      <th>Faturamento Bruto</th>
+                      <th class="text-end">Participação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="t in $store.central.salesByTotem" :key="t.id">
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <i class="ph-bold ph-devices text-primary fs-5"></i>
+                            <div>
+                              <strong x-text="t.name"></strong>
+                              <div class="text-muted small" style="font-size: 0.72rem;" x-text="`ID: ${t.id}`"></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="small fw-semibold" x-text="t.terminal"></div>
+                          <div class="text-muted small" style="font-size: 0.72rem;" x-text="t.location"></div>
+                        </td>
+                        <td>
+                          <span :class="{
+                                'selo-status-online': t.status === 'ONLINE',
+                                'selo-status-offline': t.status === 'OFFLINE'
+                              }">
+                            <span class="rounded-circle"
+                              :style="`width: 6px; height: 6px; background: ${t.status === 'ONLINE' ? '#10b981' : '#64748b'};`"></span>
+                            <span x-text="t.status === 'ONLINE' ? 'Online' : 'Offline'"></span>
+                          </span>
+                        </td>
+                        <td class="text-dark fw-bold" x-text="`${t.count} un.`"></td>
+                        <td class="text-dark fw-semibold" style="font-size: 0.85rem;"
+                          x-text="$store.central.formatCurrency(t.pix)"></td>
+                        <td class="text-dark fw-semibold" style="font-size: 0.85rem;"
+                          x-text="$store.central.formatCurrency(t.card)"></td>
+                        <td class="text-dark fw-bold" x-text="$store.central.formatCurrency(t.commission)"></td>
+                        <td class="text-dark fw-bold fs-6" x-text="$store.central.formatCurrency(t.gross)"></td>
+                        <td class="text-end">
+                          <span class="badge bg-light text-dark border fw-bold" x-text="`${t.sharePercentage}%`"></span>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                  <tfoot class="border-top fw-bold">
+                    <tr style="background: var(--cor-erp-fundo);">
+                      <td colspan="3" class="text-dark">Totais Consolidados:</td>
+                      <td class="text-dark" x-text="`${$store.central.totaisSalesByTotem.count} un.`"></td>
+                      <td class="text-dark" style="font-size: 0.85rem;"
+                        x-text="$store.central.formatCurrency($store.central.totaisSalesByTotem.pix)"></td>
+                      <td class="text-dark" style="font-size: 0.85rem;"
+                        x-text="$store.central.formatCurrency($store.central.totaisSalesByTotem.card)"></td>
+                      <td class="text-dark"
+                        x-text="$store.central.formatCurrency($store.central.totaisSalesByTotem.commission)"></td>
+                      <td class="text-dark fs-6"
+                        x-text="$store.central.formatCurrency($store.central.totaisSalesByTotem.gross)"></td>
+                      <td class="text-end">
+                        <span class="badge bg-light text-dark border fw-bold"
+                          x-text="`${$store.central.totaisSalesByTotem.sharePercentage}%`"></span>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            <!-- extrato consolidado por companhia posicionado no final da pagina -->
+            <div class="container-tabela-admin mb-4">
+              <div class="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-3"
+                style="background: var(--cor-erp-superficie-elevada);">
+                <div>
+                  <h5 class="fw-bold mb-0 texto-titulo-erp">Extrato & Repasses por Companhia de Ônibus</h5>
+                  <div class="text-muted small">Conciliação de comissões, faturamento bruto e valores líquidos a
+                    repassar</div>
+                </div>
+
+                <!-- filtro de periodo por companhia -->
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">
+                      <i class="ph-bold ph-calendar me-1 text-primary"></i> Período:
+                    </span>
+                    <select class="form-select form-select-sm campo-formulario-suave"
+                      style="width: auto; min-width: 150px; font-size: 0.82rem;"
+                      x-model="$store.central.filtroPeriodoCompanhia">
+                      <option value="hoje">Hoje</option>
+                      <option value="7dias">Últimos 7 dias</option>
+                      <option value="30dias">Últimos 30 dias</option>
+                      <option value="mes">Mês Atual</option>
+                      <option value="todos">Todo o Período</option>
+                      <option value="personalizado">Personalizado</option>
+                    </select>
+                  </div>
+
+                  <!-- Campos de data caso seja selecionado personalizado -->
+                  <template x-if="$store.central.filtroPeriodoCompanhia === 'personalizado'">
+                    <div class="d-flex align-items-center gap-1">
+                      <input type="date" class="form-control form-control-sm campo-formulario-suave"
+                        style="font-size: 0.8rem; width: 135px;" x-model="$store.central.filtroDataInicioCompanhia" />
+                      <span class="text-muted small">até</span>
+                      <input type="date" class="form-control form-control-sm campo-formulario-suave"
+                        style="font-size: 0.8rem; width: 135px;" x-model="$store.central.filtroDataFimCompanhia" />
+                    </div>
+                  </template>
+
+                  <span class="badge bg-light text-dark border px-3 py-2 fw-bold text-nowrap"
+                    x-text="`${$store.central.totalCompanyPayouts.totalPassagens} passagens no período`"></span>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Companhia</th>
+                      <th>CNPJ</th>
+                      <th>Faturamento Bruto</th>
+                      <th>Taxa Terminal</th>
+                      <th>Valor da Comissão</th>
+                      <th class="text-end">Líquido a Repassar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="payout in $store.central.companyPayouts" :key="payout.id">
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <i class="ph-bold ph-bus text-primary fs-5"></i>
+                            <strong x-text="payout.name"></strong>
+                          </div>
+                        </td>
+                        <td class="small text-muted" x-text="payout.cnpj"></td>
+                        <td class="fw-bold" x-text="$store.central.formatCurrency(payout.gross)"></td>
+                        <td><span class="badge bg-light text-dark border"
+                            x-text="`${payout.commissionPercent}%`"></span></td>
+                        <td class="text-dark fw-bold" x-text="$store.central.formatCurrency(payout.commissionAmount)">
+                        </td>
+                        <td class="text-dark fw-bold fs-6 text-end"
+                          x-text="$store.central.formatCurrency(payout.netAmount)"></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                  <tfoot class="border-top fw-bold">
+                    <tr style="background: var(--cor-erp-fundo);">
+                      <td colspan="2" class="text-dark">Totais Consolidados:</td>
+                      <td class="text-dark"
+                        x-text="$store.central.formatCurrency($store.central.totalCompanyPayouts.totalGross)"></td>
+                      <td>-</td>
+                      <td class="text-dark"
+                        x-text="$store.central.formatCurrency($store.central.totalCompanyPayouts.totalCommission)"></td>
+                      <td class="text-dark fs-6 text-end"
+                        x-text="$store.central.formatCurrency($store.central.totalCompanyPayouts.totalNet)"></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <!-- barra inferior com total dos valores no mesmo padrao consolidado -->
+              <div class="p-3 border-top" style="background: var(--cor-erp-superficie-elevada);">
+                <div class="d-flex flex-wrap justify-content-end align-items-center gap-2">
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-muted" style="font-size: 0.68rem; font-weight: 700;">TOTAL COMPANHIAS</div>
+                      <strong class="text-dark" style="font-size: 0.85rem;"
+                        x-text="`${$store.central.totalCompanyPayouts.totalEmpresas} empresas`"></strong>
+                    </div>
+                  </div>
+
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-muted" style="font-size: 0.68rem; font-weight: 700;">TOTAL BRUTO</div>
+                      <strong class="text-dark" style="font-size: 0.85rem;"
+                        x-text="$store.central.formatCurrency($store.central.totalCompanyPayouts.totalGross)"></strong>
+                    </div>
+                  </div>
+
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-muted" style="font-size: 0.68rem; font-weight: 700;">COMISSÃO RETIDA (8.5%)</div>
+                      <strong class="text-dark" style="font-size: 0.85rem;"
+                        x-text="$store.central.formatCurrency($store.central.totalCompanyPayouts.totalCommission)"></strong>
+                    </div>
+                  </div>
+
+                  <!-- Total Líquido a Repassar com caixa branca e fonte preta em todos os textos -->
+                  <div class="cartao-metodo-rodape">
+                    <div>
+                      <div class="text-dark" style="font-size: 0.68rem; font-weight: 700;">TOTAL A REPASSAR</div>
+                      <strong class="text-dark fs-6 fw-bold"
+                        x-text="$store.central.formatCurrency($store.central.totalCompanyPayouts.totalNet)"></strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div x-show="$store.central.currentTab === 'companies'" x-transition.duration.150ms>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+              <div>
+                <h4 class="fw-bold mb-1 texto-titulo-erp">Cadastro & Gestão de Companhias de Ônibus</h4>
+                <div class="text-muted small">Gerencie as empresas de transporte parceiras autorizadas nos totens</div>
+              </div>
+
+              <button type="button" class="botao-primario-suave" @click="$store.central.openNewCompanyModal()">
+                <i class="ph-bold ph-plus me-1"></i> Cadastrar Nova Companhia
+              </button>
+            </div>
+
+            <div class="container-tabela-admin">
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Nome Fantasia</th>
+                      <th>Razão Social</th>
+                      <th>CNPJ</th>
+                      <th>Telefone</th>
+                      <th>E-mail</th>
+                      <th>Comissão</th>
+                      <th>Rotas</th>
+                      <th>Status</th>
+                      <th class="text-end">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="comp in $store.central.companies" :key="comp.id">
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <i class="ph-bold ph-bus text-primary fs-5"></i>
+                            <strong x-text="comp.name"></strong>
+                          </div>
+                        </td>
+                        <td class="small" x-text="comp.legalName"></td>
+                        <td class="small text-muted" x-text="$store.central.formatarCnpj(comp.cnpj)"></td>
+                        <td class="small" x-text="comp.phone"></td>
+                        <td class="small text-muted" x-text="comp.email"></td>
+                        <td><span class="badge bg-light text-primary border border-primary fw-bold"
+                            x-text="`${comp.commissionPercent}%`"></span></td>
+                        <td><span class="badge bg-light text-muted border" x-text="`${comp.routesCount} rotas`"></span>
+                        </td>
+                        <td>
+                          <span class="badge"
+                            :class="comp.status === 'ACTIVE' ? 'bg-success-subtle text-success border border-success' : 'bg-light text-muted border'"
+                            x-text="comp.status === 'ACTIVE' ? 'Ativa' : 'Inativa'"></span>
+                        </td>
+                        <td class="text-end">
+                          <div class="d-flex justify-content-end gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-primary px-2"
+                              @click="$store.central.editCompany(comp)" title="Editar">
+                              <i class="ph-bold ph-pencil-simple"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger px-2"
+                              @click="$store.central.deleteCompany(comp.id)" title="Desativar">
+                              <i class="ph-bold ph-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div x-show="$store.central.currentTab === 'routes'" x-transition.duration.150ms>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+              <div>
+                <h4 class="fw-bold mb-1 texto-titulo-erp">Cadastro & Gestão de Rotas, Linhas e Horários</h4>
+                <div class="text-muted small">Configure destinos, horários de partida, plataformas e tarifas base</div>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary fw-bold d-flex align-items-center gap-1"
+                  @click="$store.central.abrirModalCidades()">
+                  <i class="ph-bold ph-map-pin"></i>
+                  <span>Cidades</span>
+                </button>
+                <button type="button" class="btn btn-outline-primary fw-bold d-flex align-items-center gap-1"
+                  @click="$store.central.abrirModalPlataformasPortoes()">
+                  <i class="ph-bold ph-door"></i>
+                  <span>Plataformas & Portões</span>
+                </button>
+                <button type="button" class="botao-primario-suave" @click="$store.central.openNewRouteModal()">
+                  <i class="ph-bold ph-plus me-1"></i> Cadastrar Nova Rota
+                </button>
+              </div>
+            </div>
+
+            <div class="container-tabela-admin">
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Trecho (Origem ➔ Destino)</th>
+                      <th>Viação</th>
+                      <th>Veículo & Placa</th>
+                      <th>Frota</th>
+                      <th>Horários</th>
+                      <th>Plataforma</th>
+                      <th>Configuração de Assentos & Tarifas</th>
+                      <th>Status</th>
+                      <th class="text-end">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="(route, rIndex) in $store.central.routes"
+                      :key="(route.id ? route.id : 'rt') + '-' + rIndex">
+                      <tr>
+                        <td>
+                          <div class="fw-bold texto-titulo-erp"
+                            x-text="`${(route.origin && route.origin.name) ? route.origin.name : 'Origem'} (${(route.origin && route.origin.state) ? route.origin.state : ''}) ➔ ${(route.destination && route.destination.name) ? route.destination.name : 'Destino'} (${(route.destination && route.destination.state) ? route.destination.state : ''})`">
+                          </div>
+                          <div class="small text-muted"
+                            x-text="`${(route.origin && route.origin.terminal) ? route.origin.terminal : ''} ➔ ${(route.destination && route.destination.terminal) ? route.destination.terminal : ''}`">
+                          </div>
+                        </td>
+                        <td><span class="badge bg-primary-subtle text-primary border"
+                            x-text="route.companyName || ''"></span>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center gap-1">
+                            <i class="ph-bold ph-bus text-primary"></i>
+                            <strong class="small" x-text="route.busId || 'Carro 4020'"></strong>
+                          </div>
+                          <span class="badge bg-light text-dark border mt-1" style="font-size: 0.7rem;"
+                            x-text="route.licensePlate || 'BRA-2E19'"></span>
+                        </td>
+                        <td>
+                          <template
+                            x-if="route.fleetDecks == 2 || (route.busType && route.busType.toLowerCase().includes('double'))">
+                            <span class="badge bg-info-subtle text-info-emphasis border border-info">
+                              <i class="ph-bold ph-stack me-1"></i> 2 Andares (DD)
+                            </span>
+                          </template>
+                          <template
+                            x-if="route.fleetDecks == 1 || (!route.fleetDecks && (!route.busType || !route.busType.toLowerCase().includes('double')))">
+                            <span class="badge bg-light text-muted border">
+                              <i class="ph-bold ph-square me-1"></i> 1 Andar
+                            </span>
+                          </template>
+                        </td>
+                        <td>
+                          <div class="fw-bold text-success d-flex align-items-center gap-1">
+                            <span x-text="route.departureTime"></span>
+                            <span class="text-muted fw-normal">➔</span>
+                            <span class="text-dark" x-text="route.arrivalTime"></span>
+                            <template x-if="route.daysDifference && route.daysDifference > 0">
+                              <span class="badge bg-warning-subtle text-warning-emphasis border border-warning"
+                                style="font-size: 0.65rem;" x-text="`+${route.daysDifference}d`"></span>
+                            </template>
+                          </div>
+                          <div class="small text-muted mb-1" x-text="`Duração: ${route.duration || ''}`"></div>
+                          <div class="d-flex flex-wrap gap-1">
+                            <template x-if="Array.isArray(route.operatingDays) && route.operatingDays.length === 7">
+                              <span class="badge bg-primary-subtle text-primary border"
+                                style="font-size: 0.65rem;">Todos os dias</span>
+                            </template>
+                            <template x-if="!Array.isArray(route.operatingDays) || route.operatingDays.length !== 7">
+                              <div class="d-flex flex-wrap gap-1">
+                                <template
+                                  x-for="(d, dIdx) in ($store.central.obterDiasOperacaoArray ? $store.central.obterDiasOperacaoArray(route) : (Array.isArray(route.operatingDays) ? route.operatingDays : ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']))"
+                                  :key="d + '-' + dIdx">
+                                  <span class="badge bg-light text-dark border" style="font-size: 0.62rem;"
+                                    x-text="d"></span>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-light text-muted border"
+                            x-text="`${route.platform || ''} • ${route.gate || ''}`"></span>
+                        </td>
+                        <td>
+                          <template
+                            x-if="route.fleetDecks == 2 || (route.busType && route.busType.toLowerCase().includes('double'))">
+                            <div class="small">
+                              <div class="d-flex align-items-center gap-1 text-nowrap">
+                                <span class="badge bg-primary-subtle text-primary" style="font-size: 0.65rem;">1º
+                                  Piso</span>
+                                <span class="fw-semibold" x-text="route.deck1SeatType || 'Leito Cama VIP'"></span>:
+                                <strong class="text-success"
+                                  x-text="$store.central.formatCurrency(route.deck1Price || 169.90)"></strong>
+                              </div>
+                              <div class="d-flex align-items-center gap-1 text-nowrap mt-1">
+                                <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">2º
+                                  Piso</span>
+                                <span class="fw-semibold" x-text="route.deck2SeatType || 'Semi-Leito'"></span>:
+                                <strong class="text-primary"
+                                  x-text="$store.central.formatCurrency(route.deck2Price || route.basePrice)"></strong>
+                              </div>
+                            </div>
+                          </template>
+                          <template
+                            x-if="route.fleetDecks == 1 || (!route.fleetDecks && (!route.busType || !route.busType.toLowerCase().includes('double')))">
+                            <div class="small">
+                              <span class="fw-semibold" x-text="route.singleDeckSeatType || route.busType"></span>:
+                              <strong class="text-success"
+                                x-text="$store.central.formatCurrency(route.singleDeckPrice || route.basePrice)"></strong>
+                              <div class="text-muted" style="font-size: 0.72rem;"
+                                x-text="`Capacidade: ${route.singleDeckSeatsCount || 44} assentos`"></div>
+                            </div>
+                          </template>
+                        </td>
+                        <td><span class="badge bg-success-subtle text-success border border-success">Ativa</span></td>
+                        <td class="text-end">
+                          <div class="d-flex justify-content-end gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-primary px-2"
+                              @click="$store.central.editRoute(route)" title="Editar Rota & Frota">
+                              <i class="ph-bold ph-pencil-simple"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger px-2"
+                              @click="$store.central.deleteRoute(route.id)" title="Remover Rota">
+                              <i class="ph-bold ph-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+
+
+
+          <div x-show="$store.central.currentTab === 'client-info'" x-transition.duration.150ms>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+              <div>
+                <h4 class="fw-bold mb-1 texto-titulo-erp">Clientes Cadastrados no Totem</h4>
+                <div class="text-muted small">Passageiros e clientes registrados via autoatendimento com datas de
+                  criação e dados cadastrais</div>
+              </div>
+
+              <div class="d-flex align-items-center gap-3">
+                <div class="input-group" style="width: 280px;">
+                  <span class="input-group-text bg-white border-end-0 text-muted">
+                    <i class="ph-bold ph-magnifying-glass"></i>
+                  </span>
+                  <input type="text" class="form-control campo-formulario-suave border-start-0 ps-0"
+                    placeholder="Buscar por nome ou CPF..." x-model="$store.central.buscaCliente" />
+                </div>
+
+                <span class="badge bg-light text-primary border border-primary px-3 py-2 fw-bold text-nowrap"
+                  x-text="`${$store.central.clientesFiltrados.length} clientes encontrados`"></span>
+              </div>
+            </div>
+
+            <div class="container-tabela-admin">
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Nome Completo</th>
+                      <th>CPF</th>
+                      <th>Telefone</th>
+                      <th>E-mail</th>
+                      <th>Data de Nascimento</th>
+                      <th>Data de Criação / Cadastro</th>
+                      <th>Totem de Origem</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="cliente in $store.central.clientesFiltrados" :key="cliente.id">
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <div
+                              class="rounded-circle bg-light text-primary d-flex align-items-center justify-content-center fw-bold border"
+                              style="width: 32px; height: 32px; font-size: 0.75rem;">
+                              <i class="ph-bold ph-user"></i>
+                            </div>
+                            <strong x-text="cliente.nomeCompleto"></strong>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-light text-dark border texto-codigo-erp" x-text="cliente.cpf"></span>
+                        </td>
+                        <td class="small" x-text="cliente.telefone || '-'"></td>
+                        <td class="small text-muted" x-text="cliente.email || '-'"></td>
+                        <td class="small text-muted"
+                          x-text="cliente.dataNascimento ? (cliente.dataNascimento.includes('-') ? cliente.dataNascimento.split('-').reverse().join('/') : cliente.dataNascimento) : '-'">
+                        </td>
+                        <td>
+                          <span class="fw-semibold text-success small" x-text="cliente.criadoEm"></span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary border"
+                            x-text="cliente.origemTotem || 'Totem #01'"></span>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+          <div x-show="$store.central.currentTab === 'promotions'" x-transition.duration.150ms>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+              <div>
+                <h4 class="fw-bold mb-1 texto-titulo-erp">Cadastro & Gestão de Promoções</h4>
+                <div class="text-muted small">Cupons e campanhas promocionais ativas no totem (descontos exclusivamente
+                  em porcentagem)</div>
+              </div>
+
+              <button type="button" class="botao-primario-suave" @click="$store.central.abrirModalPromocao()">
+                <i class="ph-bold ph-plus me-1"></i> Cadastrar Nova Promoção
+              </button>
+            </div>
+
+            <div class="container-tabela-admin">
+              <div class="table-responsive">
+                <table class="tabela-admin-erp">
+                  <thead>
+                    <tr>
+                      <th>Código do Cupom</th>
+                      <th>Descrição da Promoção</th>
+                      <th>Desconto (%)</th>
+                      <th>Data de Validade</th>
+                      <th>Status</th>
+                      <th class="text-end">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="promo in $store.central.promocoes" :key="promo.id">
+                      <tr>
+                        <td>
+                          <span
+                            class="badge bg-light text-primary border border-primary fw-bold texto-codigo-erp fs-6 px-3 py-1"
+                            x-text="promo.codigo"></span>
+                        </td>
+                        <td>
+                          <span class="fw-semibold" x-text="promo.descricao"></span>
+                        </td>
+                        <td>
+                          <span
+                            class="badge bg-success-subtle text-success border border-success fw-bold fs-6 px-3 py-1"
+                            x-text="`${promo.porcentagem}% OFF`"></span>
+                        </td>
+                        <td>
+                          <span class="small text-muted"
+                            x-text="promo.validade ? promo.validade.split('-').reverse().join('/') : 'Indeterminada'"></span>
+                        </td>
+                        <td>
+                          <span class="badge"
+                            :class="promo.ativo ? 'bg-success-subtle text-success border border-success' : 'bg-light text-muted border'"
+                            x-text="promo.ativo ? 'Ativa' : 'Inativa'"></span>
+                        </td>
+                        <td class="text-end">
+                          <div class="d-flex justify-content-end gap-1">
+                            <button type="button" class="btn btn-sm"
+                              :class="promo.ativo ? 'btn-outline-warning' : 'btn-outline-success'"
+                              @click="$store.central.alternarStatusPromocao(promo.id)"
+                              :title="promo.ativo ? 'Desativar Promoção' : 'Ativar Promoção'">
+                              <i class="ph-bold" :class="promo.ativo ? 'ph-pause' : 'ph-play'"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary px-2"
+                              @click="$store.central.abrirModalPromocao(promo)" title="Editar">
+                              <i class="ph-bold ph-pencil-simple"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger px-2"
+                              @click="$store.central.excluirPromocao(promo.id)" title="Excluir">
+                              <i class="ph-bold ph-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+      </main>
+
+    </div>
+  </template>
+
+
+
+
+  <div class="fundo-modal-erp" x-show="$store.central.newTotemModal" x-transition.duration.150ms style="display: none;">
+    <div class="caixa-modal-erp" style="max-width: 540px;" @click.away="$store.central.newTotemModal = false">
+      <div class="cabecalho-modal-erp">
+        <h5 class="fw-bold mb-0 texto-titulo-erp">Cadastrar Novo Totem</h5>
+        <button type="button" class="btn-close" @click="$store.central.newTotemModal = false"></button>
+      </div>
+
+      <div class="corpo-modal-erp">
+        <form @submit.prevent="$store.central.saveNewTotem()">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Nome do Totem:</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Totem #05"
+                x-model="$store.central.totemFormData.name" required />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Terminal Rodoviário:</label>
+              <select class="form-select campo-formulario-suave" x-model="$store.central.totemFormData.terminal">
+                <option value="Terminal Rodoviário Tietê">Terminal Rodoviário Tietê</option>
+                <option value="Terminal Rodoviário Barra Funda">Terminal Rodoviário Barra Funda</option>
+                <option value="Terminal Central Rodoviário">Terminal Central Rodoviário</option>
+                <option value="Terminal Rodoviário Jabaquara">Terminal Rodoviário Jabaquara</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="rotulo-formulario-suave">Localização no Terminal:</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Saguão Oeste - Portão 12"
+                x-model="$store.central.totemFormData.location" required />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Endereço IP:</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="192.168.10.105"
+                x-model="$store.central.totemFormData.ipAddress" />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Serial da Impressora:</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="PRT-TM-8829105"
+                x-model="$store.central.totemFormData.printerSerial" />
+            </div>
+          </div>
+
+          <div class="rodape-modal-erp mt-4 pt-3">
+            <button type="button" class="btn btn-outline-secondary px-3"
+              @click="$store.central.newTotemModal = false">Cancelar</button>
+            <button type="submit" class="botao-primario-suave px-4">Salvar e Ativar Totem</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="fundo-modal-erp" x-show="$store.central.companyModal" x-transition.duration.150ms style="display: none;">
+    <div class="caixa-modal-erp" style="max-width: 560px;" @click.away="$store.central.companyModal = false">
+      <div class="cabecalho-modal-erp">
+        <h5 class="fw-bold mb-0 texto-titulo-erp"
+          x-text="$store.central.companyFormData.id ? 'Editar Companhia' : 'Cadastrar Companhia de Ônibus'"></h5>
+        <button type="button" class="btn-close" @click="$store.central.companyModal = false"></button>
+      </div>
+
+      <div class="corpo-modal-erp">
+        <form @submit.prevent="$store.central.saveCompany()">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Nome Fantasia:</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Viação Cometa"
+                x-model="$store.central.companyFormData.name" required />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Razão Social:</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Viação Cometa S.A."
+                x-model="$store.central.companyFormData.legalName" />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">CNPJ (14 dígitos):</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="Apenas 14 números"
+                x-model="$store.central.companyFormData.cnpj"
+                @input="$store.central.companyFormData.cnpj = $event.target.value.replace(/\D/g, '').slice(0, 14)"
+                maxlength="14" minlength="14" inputmode="numeric" required />
+              <div class="form-text text-muted" style="font-size: 0.72rem;">Digite exatamente os 14 números do CNPJ.
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Telefone:</label>
+              <input type="text" class="form-control campo-formulario-suave" placeholder="0800 000 0000"
+                x-model="$store.central.companyFormData.phone" />
+            </div>
+            <div class="col-12 col-md-8">
+              <label class="rotulo-formulario-suave">E-mail de Suporte / Faturamento:</label>
+              <input type="email" class="form-control campo-formulario-suave" placeholder="contato@empresa.com.br"
+                x-model="$store.central.companyFormData.email" />
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="rotulo-formulario-suave">Comissão Terminal (%):</label>
+              <input type="number" step="0.1" class="form-control campo-formulario-suave" placeholder="8.5"
+                x-model="$store.central.companyFormData.commissionPercent" required />
+            </div>
+          </div>
+
+          <div class="rodape-modal-erp mt-4 pt-3">
+            <button type="button" class="btn btn-outline-secondary px-3"
+              @click="$store.central.companyModal = false">Cancelar</button>
+            <button type="submit" class="botao-primario-suave px-4">Salvar Companhia</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="fundo-modal-erp" x-show="$store.central.routeModal" x-transition.duration.150ms style="display: none;">
+    <div class="caixa-modal-erp" style="max-width: 740px;" @click.away="$store.central.routeModal = false">
+      <div class="cabecalho-modal-erp">
+        <div>
+          <h5 class="fw-bold mb-0 texto-titulo-erp"
+            x-text="$store.central.routeFormData.id ? 'Editar Rota & Frota' : 'Cadastrar Nova Rota & Frota'"></h5>
+          <div class="text-muted small">Configure itinerário, veículo, andares e tarifas por tipo de assento</div>
+        </div>
+        <button type="button" class="btn-close" @click="$store.central.routeModal = false"></button>
+      </div>
+
+      <div class="corpo-modal-erp" style="max-height: calc(85vh - 110px); overflow-y: auto;">
+        <form @submit.prevent="$store.central.saveRoute()">
+
+
+          <div class="p-3 mb-3 rounded-3"
+            style="background: var(--cor-erp-superficie-elevada); border: 1px solid var(--cor-erp-borda);">
+            <div class="fw-bold small text-uppercase text-primary mb-2 d-flex align-items-center gap-1">
+              <i class="ph-bold ph-map-trifold"></i> 1. Itinerário, Companhia & Embarque
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="rotulo-formulario-suave">Companhia Responsável:</label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.routeFormData.companyId"
+                  required>
+                  <template x-for="c in $store.central.companies" :key="c.id">
+                    <option :value="c.id" x-text="c.name"></option>
+                  </template>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <label class="rotulo-formulario-suave">Plataforma:</label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.routeFormData.platform"
+                  required>
+                  <template x-for="p in $store.central.plataformas" :key="p">
+                    <option :value="p" x-text="p"></option>
+                  </template>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <label class="rotulo-formulario-suave">Portão:</label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.routeFormData.gate" required>
+                  <template x-for="g in $store.central.portoes" :key="g">
+                    <option :value="g" x-text="g"></option>
+                  </template>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="rotulo-formulario-suave">Cidade de Origem:</label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.routeFormData.originCity"
+                  @change="$store.central.atualizarOrigemRota()" required>
+                  <template x-for="cid in $store.central.cidades" :key="cid.id || cid.nome">
+                    <option :value="cid.nome" x-text="`${cid.nome} (${cid.estado})`"></option>
+                  </template>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="rotulo-formulario-suave">Cidade de Destino:</label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.routeFormData.destCity"
+                  @change="$store.central.atualizarDestinoRota()" required>
+                  <template x-for="cid in $store.central.cidades" :key="cid.id || cid.nome">
+                    <option :value="cid.nome" x-text="`${cid.nome} (${cid.estado})`"></option>
+                  </template>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="rotulo-formulario-suave">
+                  <i class="ph-bold ph-clock me-1 text-primary"></i> Horário de Partida:
+                </label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.routeFormData.departureTime"
+                  @change="$store.central.calcularChegadaAutomatica(false)" required>
+                  <option value="06:00">06:00</option>
+                  <option value="06:30">06:30</option>
+                  <option value="07:00">07:00</option>
+                  <option value="07:30">07:30</option>
+                  <option value="08:00">08:00</option>
+                  <option value="08:30">08:30</option>
+                  <option value="09:00">09:00</option>
+                  <option value="09:30">09:30</option>
+                  <option value="10:00">10:00</option>
+                  <option value="10:30">10:30</option>
+                  <option value="11:00">11:00</option>
+                  <option value="11:30">11:30</option>
+                  <option value="12:00">12:00</option>
+                  <option value="12:30">12:30</option>
+                  <option value="13:00">13:00</option>
+                  <option value="13:30">13:30</option>
+                  <option value="14:00">14:00</option>
+                  <option value="14:30">14:30</option>
+                  <option value="15:00">15:00</option>
+                  <option value="15:30">15:30</option>
+                  <option value="16:00">16:00</option>
+                  <option value="16:30">16:30</option>
+                  <option value="17:00">17:00</option>
+                  <option value="17:30">17:30</option>
+                  <option value="18:00">18:00</option>
+                  <option value="18:30">18:30</option>
+                  <option value="19:00">19:00</option>
+                  <option value="19:30">19:30</option>
+                  <option value="20:00">20:00</option>
+                  <option value="20:30">20:30</option>
+                  <option value="21:00">21:00</option>
+                  <option value="21:30">21:30</option>
+                  <option value="22:00">22:00</option>
+                  <option value="22:30">22:30</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="rotulo-formulario-suave">
+                  <i class="ph-bold ph-timer me-1 text-primary"></i> Duração da Viagem:
+                </label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.routeFormData.duration"
+                  @change="$store.central.calcularChegadaAutomatica(false)" required>
+                  <option value="0h30">0h30 (30 min)</option>
+                  <option value="1h00">1h00</option>
+                  <option value="1h30">1h30</option>
+                  <option value="2h00">2h00</option>
+                  <option value="2h30">2h30</option>
+                  <option value="3h00">3h00</option>
+                  <option value="3h30">3h30</option>
+                  <option value="4h00">4h00</option>
+                  <option value="4h30">4h30</option>
+                  <option value="5h00">5h00</option>
+                  <option value="5h30">5h30</option>
+                  <option value="6h00">6h00</option>
+                  <option value="6h30">6h30</option>
+                  <option value="7h00">7h00</option>
+                  <option value="7h30">7h30</option>
+                  <option value="8h00">8h00</option>
+                  <option value="8h30">8h30</option>
+                  <option value="9h00">9h00</option>
+                  <option value="9h30">9h30</option>
+                  <option value="10h00">10h00</option>
+                  <option value="10h30">10h30</option>
+                  <option value="11h00">11h00</option>
+                  <option value="11h30">11h30</option>
+                  <option value="12h00">12h00</option>
+                  <option value="12h30">12h30</option>
+                  <option value="13h00">13h00</option>
+                  <option value="13h30">13h30</option>
+                  <option value="14h00">14h00</option>
+                  <option value="14h30">14h30</option>
+                  <option value="15h00">15h00</option>
+                  <option value="15h30">15h30</option>
+                  <option value="16h00">16h00</option>
+                  <option value="16h30">16h30</option>
+                  <option value="17h00">17h00</option>
+                  <option value="17h30">17h30</option>
+                  <option value="18h00">18h00</option>
+                  <option value="18h30">18h30</option>
+                  <option value="19h00">19h00</option>
+                  <option value="19h30">19h30</option>
+                  <option value="20h00">20h00</option>
+                  <option value="20h30">20h30</option>
+                  <option value="21h00">21h00</option>
+                  <option value="21h30">21h30</option>
+                  <option value="22h00">22h00</option>
+                  <option value="22h30">22h30</option>
+                  <option value="23h00">23h00</option>
+                  <option value="23h30">23h30</option>
+                  <option value="24h00">24h00 (1 dia)</option>
+                  <option value="26h00">26h00</option>
+                  <option value="28h00">28h00</option>
+                  <option value="30h00">30h00</option>
+                  <option value="36h00">36h00</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="rotulo-formulario-suave d-flex justify-content-between align-items-center mb-1">
+                  <span><i class="ph-bold ph-clock-countdown me-1 text-success"></i> Horário de Chegada:</span>
+                  <template x-if="$store.central.routeFormData.daysDifference > 0">
+                    <span class="badge bg-warning text-dark border fw-bold px-1.5 py-0.5" style="font-size: 0.68rem;"
+                      x-text="`+${$store.central.routeFormData.daysDifference} dia(s)`"></span>
+                  </template>
+                  <template
+                    x-if="!$store.central.routeFormData.daysDifference || $store.central.routeFormData.daysDifference == 0">
+                    <span class="badge bg-success-subtle text-success border border-success px-1.5 py-0.5"
+                      style="font-size: 0.65rem;">Mesmo dia</span>
+                  </template>
+                </label>
+                <input type="text" class="form-control campo-formulario-suave bg-light fw-bold text-success text-center"
+                  style="height: 38px; font-size: 0.95rem;" :value="$store.central.routeFormData.arrivalTime"
+                  readonly />
+              </div>
+
+              <!-- FLAGS DOS DIAS DA SEMANA (MINIMALISTAS) -->
+              <div class="col-12 mt-2">
+                <div class="p-2 px-3 rounded-3 border bg-white shadow-2xs">
+                  <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+                    <label class="rotulo-formulario-suave mb-0 d-flex align-items-center gap-1 small">
+                      <i class="ph-bold ph-calendar-check text-primary"></i>
+                      <span class="fw-bold">Dias de Saída / Operação:</span>
+                    </label>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Atalhos dias">
+                      <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2"
+                        style="font-size: 0.68rem; height: 24px; line-height: 22px;"
+                        @click="$store.central.selecionarTodosDias()" title="Marcar todos os dias">Todos</button>
+                      <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2"
+                        style="font-size: 0.68rem; height: 24px; line-height: 22px;"
+                        @click="$store.central.selecionarDiasUteis()" title="Segunda a Sexta">Seg-Sex</button>
+                      <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2"
+                        style="font-size: 0.68rem; height: 24px; line-height: 22px;"
+                        @click="$store.central.selecionarFimDeSemana()" title="Sábado e Domingo">Sáb-Dom</button>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-1 align-items-center">
+                    <template x-for="dia in ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']" :key="dia">
+                      <button type="button" class="btn btn-sm rounded-2 fw-semibold transition-all"
+                        style="font-size: 0.72rem; min-width: 36px; height: 26px; padding: 0 6px; display: inline-flex; align-items: center; justify-content: center;"
+                        :class="$store.central.isDiaOperacaoAtivo(dia) ? 'btn-primary text-white shadow-none' : 'btn-outline-secondary text-secondary bg-transparent border-light-subtle'"
+                        @click="$store.central.alternarDiaOperacao(dia)">
+                        <span x-text="dia"></span>
+                      </button>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="p-3 mb-3 rounded-3"
+            style="background: var(--cor-erp-superficie-elevada); border: 1px solid var(--cor-erp-borda);">
+            <div class="fw-bold small text-uppercase text-primary mb-2 d-flex align-items-center gap-1">
+              <i class="ph-bold ph-bus"></i> 2. Configuração de Frota (Veículo & Andares)
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12 col-md-4">
+                <label class="rotulo-formulario-suave">ID do Carro / Prefixo:</label>
+                <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Carro 4020"
+                  x-model="$store.central.routeFormData.busId" required />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="rotulo-formulario-suave">Placa do Ônibus:</label>
+                <input type="text" class="form-control campo-formulario-suave text-uppercase" placeholder="BRA-2E19"
+                  x-model="$store.central.routeFormData.licensePlate" required />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="rotulo-formulario-suave">Tipo de Frota (Andares):</label>
+                <select class="form-select campo-formulario-suave fw-bold text-primary"
+                  x-model.number="$store.central.routeFormData.fleetDecks" required>
+                  <option :value="1">1 Andar (Single Deck)</option>
+                  <option :value="2">2 Andares (Double Decker DD)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="p-3 rounded-3" style="background: #ffffff; border: 1px solid var(--cor-erp-borda);">
+            <div class="fw-bold small text-uppercase text-primary mb-3 d-flex align-items-center gap-1">
+              <i class="ph-bold ph-armchair"></i> 3. Tipos de Assentos & Valores das Tarifas
+            </div>
+
+
+            <template x-if="$store.central.routeFormData.fleetDecks == 1">
+              <div class="row g-3">
+                <div class="col-12 col-md-5">
+                  <label class="rotulo-formulario-suave">Tipo de Assento:</label>
+                  <select class="form-select campo-formulario-suave"
+                    x-model="$store.central.routeFormData.singleDeckSeatType">
+                    <option value="Semi-Leito">Semi-Leito (Reclinação 135° + USB)</option>
+                    <option value="Convencional Plus">Convencional Plus (Econômico)</option>
+                    <option value="Executivo Especial">Executivo Especial (Conforto)</option>
+                    <option value="Leito Total VIP">Leito Total VIP (Reclinação 180°)</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-3">
+                  <label class="rotulo-formulario-suave">Total de Poltronas:</label>
+                  <input type="number" class="form-control campo-formulario-suave" placeholder="44"
+                    x-model.number="$store.central.routeFormData.singleDeckSeatsCount" required />
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label class="rotulo-formulario-suave">Valor da Passagem (R$):</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light text-muted">R$</span>
+                    <input type="number" step="0.01" class="form-control campo-formulario-suave fw-bold text-success"
+                      placeholder="119.90" x-model.number="$store.central.routeFormData.singleDeckPrice" required />
+                  </div>
+                </div>
+              </div>
+            </template>
+
+
+            <template x-if="$store.central.routeFormData.fleetDecks == 2">
+              <div class="row g-3">
+
+                <div class="col-12">
+                  <div class="p-3 rounded-2"
+                    style="background: var(--cor-erp-primaria-clara); border: 1px dashed var(--cor-erp-primaria);">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                      <span class="badge bg-primary text-white">1º Andar (Piso Inferior)</span>
+                      <small class="text-muted">Área VIP / Cama</small>
+                    </div>
+
+                    <div class="row g-2">
+                      <div class="col-12 col-md-5">
+                        <label class="rotulo-formulario-suave" style="font-size: 0.75rem;">Tipo de Assento (1º
+                          Piso):</label>
+                        <select class="form-select campo-formulario-suave form-select-sm"
+                          x-model="$store.central.routeFormData.deck1SeatType">
+                          <option value="Leito Cama VIP (180°)">Leito Cama VIP (Reclinação 180°)</option>
+                          <option value="Leito Individual Master">Leito Individual Master</option>
+                          <option value="Leito Premium">Leito Premium</option>
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-md-3">
+                        <label class="rotulo-formulario-suave" style="font-size: 0.75rem;">Poltronas (1º Piso):</label>
+                        <input type="number" class="form-control campo-formulario-suave form-control-sm"
+                          placeholder="12" x-model.number="$store.central.routeFormData.deck1SeatsCount" required />
+                      </div>
+
+                      <div class="col-12 col-md-4">
+                        <label class="rotulo-formulario-suave" style="font-size: 0.75rem;">Tarifa 1º Piso (R$):</label>
+                        <div class="input-group input-group-sm">
+                          <span class="input-group-text bg-white text-muted">R$</span>
+                          <input type="number" step="0.01"
+                            class="form-control campo-formulario-suave fw-bold text-success" placeholder="169.90"
+                            x-model.number="$store.central.routeFormData.deck1Price" required />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-12">
+                  <div class="p-3 rounded-2"
+                    style="background: var(--cor-erp-superficie-elevada); border: 1px dashed var(--cor-erp-borda);">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                      <span class="badge bg-secondary text-white">2º Andar (Piso Superior)</span>
+                      <small class="text-muted">Área Panorâmica</small>
+                    </div>
+
+                    <div class="row g-2">
+                      <div class="col-12 col-md-5">
+                        <label class="rotulo-formulario-suave" style="font-size: 0.75rem;">Tipo de Assento (2º
+                          Piso):</label>
+                        <select class="form-select campo-formulario-suave form-select-sm"
+                          x-model="$store.central.routeFormData.deck2SeatType">
+                          <option value="Semi-Leito Panorâmico (135°)">Semi-Leito Panorâmico (135°)</option>
+                          <option value="Semi-Leito Plus">Semi-Leito Plus</option>
+                          <option value="Executivo Panorâmico">Executivo Panorâmico</option>
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-md-3">
+                        <label class="rotulo-formulario-suave" style="font-size: 0.75rem;">Poltronas (2º Piso):</label>
+                        <input type="number" class="form-control campo-formulario-suave form-control-sm"
+                          placeholder="36" x-model.number="$store.central.routeFormData.deck2SeatsCount" required />
+                      </div>
+
+                      <div class="col-12 col-md-4">
+                        <label class="rotulo-formulario-suave" style="font-size: 0.75rem;">Tarifa 2º Piso (R$):</label>
+                        <div class="input-group input-group-sm">
+                          <span class="input-group-text bg-white text-muted">R$</span>
+                          <input type="number" step="0.01"
+                            class="form-control campo-formulario-suave fw-bold text-primary" placeholder="129.90"
+                            x-model.number="$store.central.routeFormData.deck2Price" required />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div class="rodape-modal-erp mt-4 pt-3 d-flex justify-content-between align-items-center">
+            <button type="button" class="btn btn-outline-secondary px-3"
+              @click="$store.central.routeModal = false">Cancelar</button>
+            <button type="submit" class="botao-primario-suave px-4 fw-bold">
+              <i class="ph-bold ph-check me-1"></i> Salvar Rota & Frota
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="fundo-modal-erp" x-show="$store.central.modalPromocao" x-transition.duration.150ms style="display: none;">
+    <div class="caixa-modal-erp" style="max-width: 520px;" @click.away="$store.central.fecharModalPromocao()">
+      <div class="cabecalho-modal-erp">
+        <h5 class="fw-bold mb-0 texto-titulo-erp"
+          x-text="$store.central.promocaoFormulario.id ? 'Editar Promoção' : 'Cadastrar Nova Promoção'"></h5>
+        <button type="button" class="btn-close" @click="$store.central.fecharModalPromocao()"></button>
+      </div>
+
+      <div class="corpo-modal-erp">
+        <form @submit.prevent="$store.central.salvarPromocao()">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Código do Cupom:</label>
+              <input type="text" class="form-control campo-formulario-suave text-uppercase fw-bold"
+                placeholder="Ex: VERAO10" x-model="$store.central.promocaoFormulario.codigo" required />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Desconto (%):</label>
+              <div class="input-group">
+                <input type="number" min="1" max="100" step="1"
+                  class="form-control campo-formulario-suave fw-bold text-success" placeholder="10"
+                  x-model.number="$store.central.promocaoFormulario.porcentagem" required />
+                <span class="input-group-text bg-light text-muted fw-bold">%</span>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="rotulo-formulario-suave">Descrição da Promoção:</label>
+              <input type="text" class="form-control campo-formulario-suave"
+                placeholder="Ex: Desconto especial para viagens no mês de férias"
+                x-model="$store.central.promocaoFormulario.descricao" required />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="rotulo-formulario-suave">Data de Validade:</label>
+              <input type="date" class="form-control campo-formulario-suave"
+                x-model="$store.central.promocaoFormulario.validade" />
+            </div>
+
+            <div class="col-12 col-md-6 d-flex align-items-center pt-3">
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchStatusPromocao"
+                  x-model="$store.central.promocaoFormulario.ativo" />
+                <label class="form-check-label fw-semibold small" for="switchStatusPromocao">Promoção Ativa</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="rodape-modal-erp mt-4 pt-3 d-flex justify-content-between align-items-center">
+            <button type="button" class="btn btn-outline-secondary px-3"
+              @click="$store.central.fecharModalPromocao()">Cancelar</button>
+            <button type="submit" class="botao-primario-suave px-4 fw-bold">
+              <i class="ph-bold ph-check me-1"></i> Salvar Promoção
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="fundo-modal-erp" x-show="$store.central.modalPlataformasPortoes" x-transition.duration.150ms
+    style="display: none;">
+    <div class="caixa-modal-erp" style="max-width: 680px;" @click.away="$store.central.modalPlataformasPortoes = false">
+      <div class="cabecalho-modal-erp">
+        <div>
+          <h5 class="fw-bold mb-0 texto-titulo-erp">Gerenciar Plataformas & Portões</h5>
+          <div class="text-muted small">Cadastre e organize as posições de embarque disponíveis nos terminais</div>
+        </div>
+        <button type="button" class="btn-close" @click="$store.central.modalPlataformasPortoes = false"></button>
+      </div>
+
+      <div class="corpo-modal-erp">
+        <div class="row g-4">
+          <div class="col-12 col-md-6">
+            <h6 class="fw-bold mb-2 texto-titulo-erp d-flex align-items-center gap-1">
+              <i class="ph-bold ph-signpost text-primary"></i> Plataformas Cadastradas
+            </h6>
+
+            <form class="d-flex gap-2 mb-3" @submit.prevent="$store.central.adicionarPlataforma()">
+              <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Plataforma 15"
+                x-model="$store.central.novaPlataformaTexto" required />
+              <button type="submit" class="botao-primario-suave px-3" title="Adicionar">
+                <i class="ph-bold ph-plus"></i>
+              </button>
+            </form>
+
+            <div class="border rounded-2 p-2 bg-light d-flex flex-wrap gap-2"
+              style="max-height: 250px; overflow-y: auto;">
+              <template x-for="p in $store.central.plataformas" :key="p">
+                <span class="badge bg-white text-dark border d-flex align-items-center gap-1 py-2 px-2">
+                  <span x-text="p"></span>
+                  <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-1"
+                    @click="$store.central.removerPlataforma(p)" title="Remover">
+                    <i class="ph-bold ph-x"></i>
+                  </button>
+                </span>
+              </template>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <h6 class="fw-bold mb-2 texto-titulo-erp d-flex align-items-center gap-1">
+              <i class="ph-bold ph-door text-primary"></i> Portões de Embarque
+            </h6>
+
+            <form class="d-flex gap-2 mb-3" @submit.prevent="$store.central.adicionarPortao()">
+              <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Portão G"
+                x-model="$store.central.novoPortaoTexto" required />
+              <button type="submit" class="botao-primario-suave px-3" title="Adicionar">
+                <i class="ph-bold ph-plus"></i>
+              </button>
+            </form>
+
+            <div class="border rounded-2 p-2 bg-light d-flex flex-wrap gap-2"
+              style="max-height: 250px; overflow-y: auto;">
+              <template x-for="g in $store.central.portoes" :key="g">
+                <span class="badge bg-white text-dark border d-flex align-items-center gap-1 py-2 px-2">
+                  <span x-text="g"></span>
+                  <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-1"
+                    @click="$store.central.removerPortao(g)" title="Remover">
+                    <i class="ph-bold ph-x"></i>
+                  </button>
+                </span>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="rodape-modal-erp mt-4 pt-3 d-flex justify-content-end">
+          <button type="button" class="botao-primario-suave px-4"
+            @click="$store.central.modalPlataformasPortoes = false">Concluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal de Gestão e Cadastro de Cidades -->
+  <div class="fundo-modal-erp" x-show="$store.central.modalCidades" x-transition.duration.150ms style="display: none;">
+    <div class="caixa-modal-erp" style="max-width: 860px;" @click.away="$store.central.modalCidades = false">
+      <div class="cabecalho-modal-erp">
+        <div>
+          <h5 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+            <i class="ph-bold ph-map-pin"></i> Cadastro & Gestão de Cidades
+          </h5>
+          <div class="text-white-50 small">Cadastre e controle origens, destinos, terminais rodoviários e
+            disponibilidade</div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" @click="$store.central.modalCidades = false"></button>
+      </div>
+
+      <div class="corpo-modal-erp" style="max-height: calc(85vh - 120px); overflow-y: auto;">
+        <!-- Formulário de Cadastro e Edição -->
+        <div class="p-3 mb-4 rounded-3 bg-light border">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0 texto-titulo-erp d-flex align-items-center gap-1">
+              <i class="ph-bold ph-pencil-simple text-primary"></i>
+              <span
+                x-text="$store.central.cidadeFormulario.id ? 'Editar Cidade Selecionada' : 'Cadastrar Nova Cidade'"></span>
+            </h6>
+            <template x-if="$store.central.cidadeFormulario.id">
+              <button type="button" class="btn btn-sm btn-outline-secondary"
+                @click="$store.central.cancelarEdicaoCidade()">
+                <i class="ph-bold ph-x me-1"></i> Cancelar Edição
+              </button>
+            </template>
+          </div>
+
+          <form @submit.prevent="$store.central.salvarCidade()">
+            <div class="row g-3">
+              <div class="col-12 col-md-5">
+                <label class="rotulo-formulario-suave">Nome da Cidade:</label>
+                <input type="text" class="form-control campo-formulario-suave" placeholder="Ex: Campinas"
+                  x-model="$store.central.cidadeFormulario.nome" required />
+              </div>
+
+              <div class="col-12 col-md-2">
+                <label class="rotulo-formulario-suave">UF / Estado:</label>
+                <select class="form-select campo-formulario-suave" x-model="$store.central.cidadeFormulario.estado"
+                  required>
+                  <option value="SP">SP</option>
+                  <option value="RJ">RJ</option>
+                  <option value="MG">MG</option>
+                  <option value="PR">PR</option>
+                  <option value="SC">SC</option>
+                  <option value="RS">RS</option>
+                  <option value="BA">BA</option>
+                  <option value="GO">GO</option>
+                  <option value="DF">DF</option>
+                  <option value="ES">ES</option>
+                  <option value="PE">PE</option>
+                  <option value="CE">CE</option>
+                  <option value="PA">PA</option>
+                  <option value="MT">MT</option>
+                  <option value="MS">MS</option>
+                  <option value="PB">PB</option>
+                  <option value="RN">RN</option>
+                  <option value="AL">AL</option>
+                  <option value="SE">SE</option>
+                  <option value="PI">PI</option>
+                  <option value="MA">MA</option>
+                  <option value="AM">AM</option>
+                  <option value="RO">RO</option>
+                  <option value="AC">AC</option>
+                  <option value="AP">AP</option>
+                  <option value="RR">RR</option>
+                  <option value="TO">TO</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-5">
+                <label class="rotulo-formulario-suave">Terminal Rodoviário:</label>
+                <input type="text" class="form-control campo-formulario-suave"
+                  placeholder="Ex: Terminal Ramos de Azevedo" x-model="$store.central.cidadeFormulario.terminal" />
+              </div>
+
+              <div class="col-12 d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" role="switch" id="switchAtivoCidade"
+                    x-model="$store.central.cidadeFormulario.ativo">
+                  <label class="form-check-label small fw-semibold" for="switchAtivoCidade"
+                    x-text="$store.central.cidadeFormulario.ativo ? 'Cidade Ativa para Operação' : 'Cidade Inativa'"></label>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <template x-if="$store.central.cidadeFormulario.id">
+                    <button type="button" class="btn btn-outline-secondary btn-sm px-3"
+                      @click="$store.central.cancelarEdicaoCidade()">
+                      Cancelar
+                    </button>
+                  </template>
+                  <button type="submit" class="botao-primario-suave px-4">
+                    <i class="ph-bold ph-check me-1"></i>
+                    <span x-text="$store.central.cidadeFormulario.id ? 'Atualizar Cidade' : 'Cadastrar Cidade'"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabela de Controle de Cidades -->
+        <div>
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h6 class="fw-bold mb-0 texto-titulo-erp d-flex align-items-center gap-1">
+              <i class="ph-bold ph-buildings text-primary"></i>
+              <span>Cidades Cadastradas</span>
+              <span class="badge bg-light text-muted border ms-1"
+                x-text="`${$store.central.cidades.length} cidades`"></span>
+            </h6>
+
+            <div class="input-group" style="max-width: 280px;">
+              <span class="input-group-text bg-white text-muted border-end-0 py-1">
+                <i class="ph-bold ph-magnifying-glass"></i>
+              </span>
+              <input type="text" class="form-control form-control-sm border-start-0 ps-0"
+                placeholder="Buscar por cidade ou estado..." x-model="$store.central.buscaCidadeFiltro" />
+            </div>
+          </div>
+
+          <div class="table-responsive border rounded-3 bg-white" style="max-height: 280px; overflow-y: auto;">
+            <table class="tabela-admin-erp align-middle mb-0">
+              <thead class="sticky-top bg-light">
+                <tr>
+                  <th>Cidade / UF</th>
+                  <th>Terminal Rodoviário</th>
+                  <th class="text-center">Rotas Vinculadas</th>
+                  <th class="text-center">Status</th>
+                  <th class="text-end">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="cid in $store.central.obterCidadesFiltradas()" :key="cid.id || cid.nome">
+                  <tr>
+                    <td>
+                      <div class="fw-bold text-dark d-flex align-items-center gap-2">
+                        <i class="ph-bold ph-map-pin text-primary"></i>
+                        <span x-text="cid.nome"></span>
+                        <span class="badge bg-secondary-subtle text-secondary border small" x-text="cid.estado"></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="text-muted small" x-text="cid.terminal || `Terminal de ${cid.nome}`"></span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-light text-muted border"
+                        x-text="`${$store.central.obterTotalRotasCidade(cid.nome)} rotas`"></span>
+                    </td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-sm p-0 border-0"
+                        @click="$store.central.alternarStatusCidade(cid)"
+                        :title="cid.ativo !== false ? 'Clique para desativar' : 'Clique para ativar'">
+                        <span class="badge"
+                          :class="cid.ativo !== false ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-secondary-subtle text-secondary border'">
+                          <i class="ph-bold" :class="cid.ativo !== false ? 'ph-check-circle' : 'ph-prohibit'"></i>
+                          <span x-text="cid.ativo !== false ? 'Ativa' : 'Inativa'"></span>
+                        </span>
+                      </button>
+                    </td>
+                    <td class="text-end">
+                      <div class="d-inline-flex gap-1">
+                        <button type="button" class="btn btn-sm btn-outline-primary py-1 px-2"
+                          @click="$store.central.editarCidade(cid)" title="Editar dados da cidade">
+                          <i class="ph-bold ph-pencil-simple"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger py-1 px-2"
+                          @click="$store.central.removerCidade(cid)" title="Excluir cidade">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="$store.central.obterCidadesFiltradas().length === 0">
+                  <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                      <i class="ph-bold ph-magnifying-glass fs-3 d-block mb-1 text-muted"></i>
+                      Nenhuma cidade encontrada com o filtro informado.
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="rodape-modal-erp mt-4 pt-3 d-flex justify-content-end">
+          <button type="button" class="botao-primario-suave px-4"
+            @click="$store.central.modalCidades = false">Concluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 10090;">
+    <template x-for="t in $store.central.toasts" :key="t.id">
+      <div class="toast show align-items-center border-0 mb-2 shadow"
+        :class="`text-bg-${t.type === 'danger' ? 'danger' : (t.type === 'warning' ? 'warning' : (t.type === 'success' ? 'success' : 'primary'))}`"
+        role="alert">
+        <div class="d-flex">
+          <div class="toast-body fw-semibold" x-text="t.message"></div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
