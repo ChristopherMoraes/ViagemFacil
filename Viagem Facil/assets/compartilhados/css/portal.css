@@ -1,0 +1,200 @@
+:root {
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --primary-accent: #3b82f6;
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --emerald-accent: #10b981;
+  --emerald-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --bg-dark: #090d16;
+  --card-bg: #111827bf;
+  --card-border: #ffffff14;
+  --card-hover-border: #3b82f680;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-dark);
+  background-image:
+    radial-gradient(circle at 20% 20%, #2563eb2e 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, #10b98124 0%, transparent 50%),
+    linear-gradient(#071317bf, #071317e0),
+    url('../img/biobus_rodovia_brasil.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  color: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+h1,
+h2,
+h3,
+h4,
+.brand-title {
+  font-family: var(--font-heading);
+}
+
+.portal-container {
+  max-width: 1080px;
+}
+
+.portal-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.portal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-totem::before {
+  background: var(--primary-gradient);
+}
+
+.card-painel::before {
+  background: var(--emerald-gradient);
+}
+
+.portal-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 35px -10px #00000080;
+  color: inherit;
+}
+
+.card-totem:hover {
+  border-color: #3b82f666;
+  box-shadow: 0 20px 35px -10px #2563eb40;
+}
+
+.card-painel:hover {
+  border-color: #10b98166;
+  box-shadow: 0 20px 35px -10px #10b98140;
+}
+
+.portal-card:hover::before {
+  opacity: 1;
+}
+
+.icon-wrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.portal-card:hover .icon-wrapper {
+  transform: scale(1.08);
+}
+
+.icon-totem {
+  background: #2563eb26;
+  color: #60a5fa;
+  border: 1px solid #3b82f640;
+}
+
+.icon-painel {
+  background: #10b98126;
+  color: #34d399;
+  border: 1px solid #10b98140;
+}
+
+.badge-module {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0.35rem 0.8rem;
+  border-radius: 50rem;
+}
+
+.badge-totem {
+  background: #2563eb33;
+  color: #93c5fd;
+  border: 1px solid #3b82f64d;
+}
+
+.badge-painel {
+  background: #10b98133;
+  color: #6ee7b7;
+  border: 1px solid #10b9814d;
+}
+
+.action-btn {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-totem {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-totem:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.btn-painel {
+  background: #059669;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-painel:hover {
+  background: #047857;
+  color: #ffffff;
+}
+
+.status-pill {
+  background: #ffffff0d;
+  border: 1px solid #ffffff1a;
+  border-radius: 50rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+}
